@@ -1,0 +1,28 @@
+---
+name: consul
+version: "1.0.8"
+description: Wrapper for consul, a key value secret keeper.
+author: Logan McDonald <logan@kickstarter.com>
+cog_bundle_version: 4
+docker:
+  image: "kickstarter/cog-consul"
+  tag: "v1.0.8"
+commands:
+  read:
+    executable: /home/bundle/cog-command
+    description: Get values for a given key
+    arguments: "<key>"
+    rules:
+      - 'allow'
+  write:
+    executable: /home/bundle/cog-command
+    description: Write the value for a given key
+    arguments: "<key> <value>"
+    rules:
+      - 'allow'
+  list:
+    executable: /home/bundle/cog-command
+    description: List given keys for an endpoint
+    arguments: "<endpoint>"
+    rules:
+      - 'allow'
