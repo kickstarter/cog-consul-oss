@@ -3,13 +3,13 @@ require_relative 'spec_helper'
 describe 'CogCmd::Consul' do
   let(:encoded_value) { Base64.encode64('myvalue') }
   let(:mock_value) do
-    {
+    [{
       'CreateIndex' => 97,
       'ModifyIndex' => 97,
       'Key' => 'myKey',
       'Flags' => 0,
       'Value' => encoded_value
-    }
+    }]
   end
 
   let(:mock_endpoint) do
@@ -61,17 +61,6 @@ describe 'CogCmd::Consul' do
     mock_server_thread.exit
   end
 
-  context 'Consul::Write' do
-    describe 'writing a value' do
-      let(:command_name) { 'write' }
-
-      it 'should create an write' do
-        run_command(args: ['myKey', 'myval'])
-        expect(command).to be_an_instance_of CogCmd::Consul::Write
-      end
-    end
-  end
-
   context 'Consul::Read' do
     let(:command_name) { 'read' }
     describe 'getting a key' do
@@ -81,7 +70,8 @@ describe 'CogCmd::Consul' do
         end
 
         run_command(args: ['myKey'])
-        expect(command).to respond_with_text('myvalue')
+        expect(command).to respond_with({"body"=>"myvalue"})
+        expect(command).to respond_with_text("myvalue")
       end
     end
 
@@ -91,8 +81,9 @@ describe 'CogCmd::Consul' do
           res.status = 404
         end
 
-        run_command(args: ['notMyKey'])
-        expect(command).to respond_with_text("\nError 404: 💔 Sorry. There was a problem processing this request.")
+        expect {
+          run_command(args: ['notMyKey'])
+        }.to raise_error(Cog::Abort)
       end
     end
   end
@@ -107,7 +98,7 @@ describe 'CogCmd::Consul' do
         end
 
         run_command(args: ['myendpoint'])
-        expect(command).to respond_with_text("\nKeys:\n🔑 key1\n🔑 key2\n🔑 key3\n")
+        expect(command).to respond_with("body" => [{:key=>"🔑 key1"}, {:key=>"🔑 key2"}, {:key=>"🔑 key3"}])
       end
     end
 
@@ -116,9 +107,10 @@ describe 'CogCmd::Consul' do
         mock_server.mount_proc '/' do |req, res|
           res.status = 404
         end
-
-        run_command(args: ['notMyEndpoint'])
-        expect(command).to respond_with_text("\nError 404: 💔 Sorry. There was a problem processing this request.")
+  
+        expect {
+          run_command(args: ['notMyEndpoint'])
+        }.to raise_error(Cog::Abort)
       end
     end
   end
