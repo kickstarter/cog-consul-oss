@@ -98,7 +98,7 @@ describe 'CogCmd::Consul' do
         end
 
         run_command(args: ['myendpoint'])
-        expect(command).to respond_with("body" => "\n🔑 key1\n🔑 key2\n🔑 key3\n")
+        expect(command).to respond_with("body" => "\n🔑 key1\n🔑 key2\n🔑 key3")
       end
     end
 
