@@ -12,7 +12,7 @@ class CogCmd::Consul::List < Cog::Command
     if success(res)
       body = parse_body(res)
       keys = format_keys(body)
-      response.template = 'list'
+      response.template = 'default'
       response['body'] = keys
     else
       raise(Cog::Abort, "\nError #{res.code}: 💔 Sorry. There was a problem processing this request.")
@@ -35,6 +35,8 @@ class CogCmd::Consul::List < Cog::Command
   end
 
   def format_keys(body)
-    body.map{ |kv| { key: '🔑 ' + kv['Key'].to_s } }
+    message = "\n"
+    body.each{ |kv| message << '🔑 ' + kv['Key'].to_s + "\n" }
+    message
   end
 end

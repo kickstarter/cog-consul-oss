@@ -70,8 +70,8 @@ describe 'CogCmd::Consul' do
         end
 
         run_command(args: ['myKey'])
-        expect(command).to respond_with({"body"=>"myvalue"})
-        expect(command).to respond_with_text("myvalue")
+        expect(command).to respond_with({"body"=>"Value: myvalue"})
+        expect(command).to respond_with_text("Value: myvalue")
       end
     end
 
@@ -98,7 +98,7 @@ describe 'CogCmd::Consul' do
         end
 
         run_command(args: ['myendpoint'])
-        expect(command).to respond_with("body" => [{:key=>"🔑 key1"}, {:key=>"🔑 key2"}, {:key=>"🔑 key3"}])
+        expect(command).to respond_with("body" => "\n🔑 key1\n🔑 key2\n🔑 key3\n")
       end
     end
 
