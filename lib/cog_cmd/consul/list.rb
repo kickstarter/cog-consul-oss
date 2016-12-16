@@ -6,22 +6,24 @@ class CogCmd::Consul::List < Cog::Command
   include CogCmd::Consul
 
   def run_command
-    args = request.args
-    key = args[0]
-    uri = URI.parse(domain + key)
-    params = { :recurse => true, :token => consul_token }
-    uri.query = URI.encode_www_form(params)
-    res = Net::HTTP.get_response(uri)
+    endpoint = request.args[0]
+    res = fetch_keys(endpoint)
 
     if success(res)
       body = parse_body(res)
-      keys = body.map{ |kv| kv['Key'] }
-      message = format_message(keys)
+      keys = format_keys(body)
+      response.template = 'list'
+      response['body'] = keys
     else
-      message = "\nError #{res.code}: 💔 Sorry. There was a problem processing this request."
+      response.content = "\nError #{res.code}: 💔 Sorry. There was a problem processing this request."
     end
+  end
 
-    response['body'] = message
+  def fetch_keys(endpoint)
+    uri = URI.parse(domain + endpoint)
+    params = { :recurse => true, :token => consul_token }
+    uri.query = URI.encode_www_form(params)
+    Net::HTTP.get_response(uri)
   end
 
   def success(res)
@@ -32,11 +34,7 @@ class CogCmd::Consul::List < Cog::Command
     JSON.parse(res.body)
   end
 
-  def format_message(keys)
-    key_message = "\nKeys:\n"
-    keys.each do |key|
-      key_message += "🔑 " + key + "\n"
-    end
-    return key_message
+  def format_keys(body)
+    body.map{ |kv| kv['Key'] }
   end
 end

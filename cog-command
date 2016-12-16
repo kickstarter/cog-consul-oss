@@ -1,9 +1,8 @@
 #!/usr/bin/env ruby
 
-libdir = File.join(File.dirname(__FILE__), 'lib')
-$LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
+Dir.chdir(File.dirname(__FILE__))
 
-require 'bundler/setup'
+require_relative 'bundle/bundler/setup'
 require 'cog'
 
 Cog.bundle('consul')

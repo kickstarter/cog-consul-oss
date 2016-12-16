@@ -3,13 +3,13 @@ require_relative 'spec_helper'
 describe 'CogCmd::Consul' do
   let(:encoded_value) { Base64.encode64('myvalue') }
   let(:mock_value) do
-    {
+    [{
       'CreateIndex' => 97,
       'ModifyIndex' => 97,
       'Key' => 'myKey',
       'Flags' => 0,
       'Value' => encoded_value
-    }
+    }]
   end
 
   let(:mock_endpoint) do
@@ -81,7 +81,8 @@ describe 'CogCmd::Consul' do
         end
 
         run_command(args: ['myKey'])
-        expect(command).to respond_with_text('myvalue')
+        expect(command).to respond_with({"body"=>"myvalue"})
+        expect(command).to respond_with_text("myvalue")
       end
     end
 
@@ -92,7 +93,7 @@ describe 'CogCmd::Consul' do
         end
 
         run_command(args: ['notMyKey'])
-        expect(command).to respond_with_text("\nError 404: 💔 Sorry. There was a problem processing this request.")
+        expect(command).to respond_with("\nError 404: 💔 Sorry. There was a problem processing this request.")
       end
     end
   end
@@ -107,7 +108,7 @@ describe 'CogCmd::Consul' do
         end
 
         run_command(args: ['myendpoint'])
-        expect(command).to respond_with_text("\nKeys:\n🔑 key1\n🔑 key2\n🔑 key3\n")
+        expect(command).to respond_with("body" => ["key1", "key2", "key3"])
       end
     end
 
@@ -118,7 +119,7 @@ describe 'CogCmd::Consul' do
         end
 
         run_command(args: ['notMyEndpoint'])
-        expect(command).to respond_with_text("\nError 404: 💔 Sorry. There was a problem processing this request.")
+        expect(command).to respond_with("\nError 404: 💔 Sorry. There was a problem processing this request.")
       end
     end
   end
