@@ -37,6 +37,6 @@ class CogCmd::Consul::List < Cog::Command
   def format_keys(body)
     message = "\n"
     body.each{ |kv| message << '🔑 ' + kv['Key'].to_s + "\n" }
-    message
+    message.chomp
   end
 end
