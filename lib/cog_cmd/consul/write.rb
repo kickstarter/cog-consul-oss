@@ -6,6 +6,8 @@ class CogCmd::Consul::Write < Cog::Command
   include CogCmd::Consul
 
   def run_command
+    raise(Cog::Abort, restircted_channels_response) if !permitted_channels.include?(current_channel)
+
     key = request.args[0]
     value = request.args[1..-1]
     res = post_key(key, value)
