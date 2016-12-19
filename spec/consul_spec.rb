@@ -53,12 +53,62 @@ describe 'CogCmd::Consul' do
     mock_server_thread
     ENV['CONSUL_DOMAIN_NAME'] = "http://localhost:#{mock_server.config[:Port]}/"
     ENV['CONSUL_TOKEN'] = 'fake-token'
+    ENV['CONSUL_CHANNELS'] = 'fake-channel, other-fake-channel'
+    ENV['COG_ROOM'] = 'fake-channel'
   end
 
   after do
     ENV.clear
     mock_server.shutdown
     mock_server_thread.exit
+  end
+
+  context 'env vars' do 
+    let(:command_name) { 'read' }
+    describe 'required env variables' do
+      it 'should throw error if missing' do
+        ENV['CONSUL_DOMAIN_NAME'], ENV['CONSUL_TOKEN'] = nil, nil
+
+        mock_server.mount_proc '/' do |req, res|
+          res.body = mock_value.to_json
+        end
+
+        expect {
+          run_command(args: ['myKey'])
+        }.to raise_error(Cog::Error)
+      end
+    end
+
+    describe 'optional env variables' do
+      it 'should skip the requirement' do
+        ENV['CONSUL_CHANNELS'] = nil
+        mock_server.mount_proc '/' do |req, res|
+          res.body = mock_value.to_json
+        end
+
+        expect {
+          run_command(args: ['myKey'])
+        }.to_not raise_error
+      end
+    end
+
+  end
+
+  context 'Consul:Write' do 
+    let(:command_name) { 'write' }
+    describe 'writing a key' do
+      it 'should not allow you to run outside restricted_channels' do
+        ENV['COG_ROOM'] = 'wrong-fake-channel'
+
+        mock_server.mount_proc '/' do |req, res|
+          res.body = mock_value.to_json
+        end
+
+        expect {
+          run_command(args: ['myKey', 'myValue'])
+        }.to raise_error(Cog::Error, 'ERROR: You are trying to run a restricted command in the wrong channel. Please run this command in any of the permitted_channels: #fake-channel, other-fake-channel.')
+      end
+    end
   end
 
   context 'Consul::Read' do
@@ -83,7 +133,7 @@ describe 'CogCmd::Consul' do
 
         expect {
           run_command(args: ['notMyKey'])
-        }.to raise_error(Cog::Abort)
+        }.to raise_error(Cog::Error)
       end
     end
   end
@@ -110,7 +160,7 @@ describe 'CogCmd::Consul' do
   
         expect {
           run_command(args: ['notMyEndpoint'])
-        }.to raise_error(Cog::Abort)
+        }.to raise_error(Cog::Error)
       end
     end
   end
