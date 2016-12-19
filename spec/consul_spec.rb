@@ -67,7 +67,7 @@ describe 'CogCmd::Consul' do
     let(:command_name) { 'read' }
     describe 'required env variables' do
       it 'should throw error if missing' do
-        ENV['CONSUL_DOMAIN_NAME'], ENV['CONSUL_TOKEN'], ENV['CONSUL_CHANNELS'] = nil, nil, nil
+        ENV['CONSUL_DOMAIN_NAME'], ENV['CONSUL_TOKEN'] = nil, nil
 
         mock_server.mount_proc '/' do |req, res|
           res.body = mock_value.to_json

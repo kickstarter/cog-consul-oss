@@ -2,11 +2,11 @@
 author: Logan McDonald <logan@kickstarter.com>
 cog_bundle_version: 4
 name: consul
-description: Wrapper for consul, a key value secret keeper.
-version: 1.0.20
+description: Wrapper for Consul, a key value secret keeper.
+version: 1.0.22
 docker:
   image: "kickstarter/cog-consul-oss"
-  tag: "v1.0.20"
+  tag: 'v1.0.22'
 commands:
   read:
     executable: /home/bundle/cog-command
