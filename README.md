@@ -29,6 +29,8 @@ Consul uses env vars to configure it. Both commands require
 `CONSUL_DOMAIN_NAME` and `CONSUL_MASTER_TOKEN` to be set. These are the 
 domain name for your consul account and the api token for write privledges respectively. You can find an example of how to set these configurations in the `base/example_dynamic_config.yaml`. 
 
+Optionally, you can set `CONSUL_CHANNELS` to restrict permisible channels for `write`. 
+
 ## Install
 
     git clone git@github.com:kickstarter/cog-consul-oss.git
