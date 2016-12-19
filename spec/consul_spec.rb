@@ -83,7 +83,7 @@ describe 'CogCmd::Consul' do
   context 'Consul:Write' do 
     let(:command_name) { 'write' }
     describe 'writing a key' do
-      it 'should not allow you to run outside restircted_channels' do
+      it 'should not allow you to run outside restricted_channels' do
         ENV['COG_ROOM'] = 'wrong-fake-channel'
 
         mock_server.mount_proc '/' do |req, res|

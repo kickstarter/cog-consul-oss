@@ -6,7 +6,7 @@ class CogCmd::Consul::Write < Cog::Command
   include CogCmd::Consul
 
   def run_command
-    raise(Cog::Error, restircted_channels_response) if !permitted_channels.include?(current_channel)
+    raise(Cog::Error, restricted_channels_response) if !permitted_channels.include?(current_channel)
 
     key = request.args[0]
     value = request.args[1..-1]
