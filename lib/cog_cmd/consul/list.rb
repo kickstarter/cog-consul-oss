@@ -15,7 +15,7 @@ class CogCmd::Consul::List < Cog::Command
       response.template = 'default'
       response['body'] = keys
     else
-      raise(Cog::Abort, "\nError #{res.code}: 💔 Sorry. There was a problem processing this request.")
+      raise(Cog::Error, "Error #{res.code}: 💔 Sorry. There was a problem processing this request.")
     end
   end
 

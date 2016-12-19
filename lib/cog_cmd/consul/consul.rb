@@ -23,7 +23,6 @@ module CogCmd::Consul
   end
 
   def restircted_channels_response
-    "ERROR: You are trying to run a restricted command in the wrong channel.
-    Please run this command in any of the permitted_channels: #{permitted_channels}."
+    "ERROR: You are trying to run a restricted command in the wrong channel. Please run this command in any of the permitted_channels: ##{permitted_channels}."
   end
 end

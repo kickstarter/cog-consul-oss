@@ -6,7 +6,7 @@ class CogCmd::Consul::Write < Cog::Command
   include CogCmd::Consul
 
   def run_command
-    raise(Cog::Abort, restircted_channels_response) if !permitted_channels.include?(current_channel)
+    raise(Cog::Error, restircted_channels_response) if !permitted_channels.include?(current_channel)
 
     key = request.args[0]
     value = request.args[1..-1]
@@ -16,7 +16,7 @@ class CogCmd::Consul::Write < Cog::Command
       response.template = 'default'
       response['body'] = "\n🎉 Value associated with key successfully written."
     else
-      raise(Cog::Abort, "\n💔 Sorry. This key could not be written.")
+      raise(Cog::Error, "Error #{res.code}: 💔 Sorry. Your key could not be written.")
     end
   end
 

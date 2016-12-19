@@ -14,7 +14,7 @@ class CogCmd::Consul::Read < Cog::Command
       response.template = 'default'
       response['body'] = 'Value: ' + Base64.decode64(body[0]["Value"])
     else
-      raise(Cog::Abort, "Error #{res.code}: 💔 Sorry. There was a problem processing this request.")
+      raise(Cog::Error, "Error #{res.code}: 💔 Sorry. There was a problem processing this request.")
     end
   end
 

@@ -92,7 +92,7 @@ describe 'CogCmd::Consul' do
 
         expect {
           run_command(args: ['myKey', 'myValue'])
-        }.to raise_error(Cog::Abort)
+        }.to raise_error(Cog::Error)
       end
     end
   end
@@ -119,7 +119,7 @@ describe 'CogCmd::Consul' do
 
         expect {
           run_command(args: ['notMyKey'])
-        }.to raise_error(Cog::Abort)
+        }.to raise_error(Cog::Error)
       end
     end
   end
@@ -146,7 +146,7 @@ describe 'CogCmd::Consul' do
   
         expect {
           run_command(args: ['notMyEndpoint'])
-        }.to raise_error(Cog::Abort)
+        }.to raise_error(Cog::Error)
       end
     end
   end
