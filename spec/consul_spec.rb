@@ -53,12 +53,48 @@ describe 'CogCmd::Consul' do
     mock_server_thread
     ENV['CONSUL_DOMAIN_NAME'] = "http://localhost:#{mock_server.config[:Port]}/"
     ENV['CONSUL_TOKEN'] = 'fake-token'
+    ENV['CONSUL_CHANNELS'] = 'cog-dev'
+    ENV['COG_ROOM'] = 'cog-dev'
   end
 
   after do
     ENV.clear
     mock_server.shutdown
     mock_server_thread.exit
+  end
+
+  context 'env vars' do 
+    let(:command_name) { 'read' }
+    describe 'required env variables' do
+      it 'should throw error if missing' do
+        ENV['CONSUL_DOMAIN_NAME'], ENV['CONSUL_TOKEN'], ENV['CONSUL_CHANNELS'] = nil, nil, nil
+
+        mock_server.mount_proc '/' do |req, res|
+          res.body = mock_value.to_json
+        end
+
+        expect {
+          run_command(args: ['myKey'])
+        }.to raise_error(Cog::Error)
+      end
+    end
+  end
+
+  context 'Consul:Write' do 
+    let(:command_name) { 'write' }
+    describe 'writing a key' do
+      it 'should not allow you to run outside restircted_channels' do
+        ENV['COG_ROOM'] = 'not-cog-dev'
+
+        mock_server.mount_proc '/' do |req, res|
+          res.body = mock_value.to_json
+        end
+
+        expect {
+          run_command(args: ['myKey', 'myValue'])
+        }.to raise_error(Cog::Abort)
+      end
+    end
   end
 
   context 'Consul::Read' do
