@@ -53,8 +53,8 @@ describe 'CogCmd::Consul' do
     mock_server_thread
     ENV['CONSUL_DOMAIN_NAME'] = "http://localhost:#{mock_server.config[:Port]}/"
     ENV['CONSUL_TOKEN'] = 'fake-token'
-    ENV['CONSUL_CHANNELS'] = 'cog-dev'
-    ENV['COG_ROOM'] = 'cog-dev'
+    ENV['CONSUL_CHANNELS'] = 'fake-channel'
+    ENV['COG_ROOM'] = 'fake-channel'
   end
 
   after do
@@ -84,7 +84,7 @@ describe 'CogCmd::Consul' do
     let(:command_name) { 'write' }
     describe 'writing a key' do
       it 'should not allow you to run outside restircted_channels' do
-        ENV['COG_ROOM'] = 'not-cog-dev'
+        ENV['COG_ROOM'] = 'wrong-fake-channel'
 
         mock_server.mount_proc '/' do |req, res|
           res.body = mock_value.to_json
