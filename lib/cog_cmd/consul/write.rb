@@ -6,7 +6,7 @@ class CogCmd::Consul::Write < Cog::Command
   include CogCmd::Consul
 
   def run_command
-    raise(Cog::Error, restricted_channels_response) if !permitted_channels.include?(current_channel)
+    restrict_command unless permitted_channels.nil?
 
     key = request.args[0]
     value = request.args[1..-1]
@@ -18,6 +18,10 @@ class CogCmd::Consul::Write < Cog::Command
     else
       raise(Cog::Error, "Error #{res.code}: 💔 Sorry. Your key could not be written.")
     end
+  end
+
+  def restrict_command
+    raise(Cog::Error, restricted_channels_response) if !permitted_channels.split(/,\s*/).include?(current_channel)
   end
 
   def post_key(key, value)

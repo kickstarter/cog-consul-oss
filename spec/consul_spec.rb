@@ -53,7 +53,7 @@ describe 'CogCmd::Consul' do
     mock_server_thread
     ENV['CONSUL_DOMAIN_NAME'] = "http://localhost:#{mock_server.config[:Port]}/"
     ENV['CONSUL_TOKEN'] = 'fake-token'
-    ENV['CONSUL_CHANNELS'] = 'fake-channel'
+    ENV['CONSUL_CHANNELS'] = 'fake-channel, other-fake-channel'
     ENV['COG_ROOM'] = 'fake-channel'
   end
 
@@ -78,6 +78,20 @@ describe 'CogCmd::Consul' do
         }.to raise_error(Cog::Error)
       end
     end
+
+    describe 'optional env variables' do
+      it 'should skip the requirement' do
+        ENV['CONSUL_CHANNELS'] = nil
+        mock_server.mount_proc '/' do |req, res|
+          res.body = mock_value.to_json
+        end
+
+        expect {
+          run_command(args: ['myKey'])
+        }.to_not raise_error
+      end
+    end
+
   end
 
   context 'Consul:Write' do 
@@ -92,7 +106,7 @@ describe 'CogCmd::Consul' do
 
         expect {
           run_command(args: ['myKey', 'myValue'])
-        }.to raise_error(Cog::Error)
+        }.to raise_error(Cog::Error, 'ERROR: You are trying to run a restricted command in the wrong channel. Please run this command in any of the permitted_channels: #fake-channel, other-fake-channel.')
       end
     end
   end

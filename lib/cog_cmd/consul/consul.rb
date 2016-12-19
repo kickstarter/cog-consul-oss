@@ -15,7 +15,7 @@ module CogCmd::Consul
   end
 
   def permitted_channels
-    env_var('CONSUL_CHANNELS').split(/,\s*/)
+    env_var('CONSUL_CHANNELS')
   end
 
   def current_channel
